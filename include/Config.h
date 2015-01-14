@@ -46,6 +46,9 @@ public:
 	std::string bind;
 	short int port;
 
+	// Random pictures folder
+	std::string randoms;
+
 	// Call an event.
 	EventDispatcher ConfigEvents;
 };

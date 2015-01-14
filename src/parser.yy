@@ -62,6 +62,7 @@
 %token PATH
 %token SERVER
 %token RETRIES
+%token RANDOMS
 
 
 /*%token SERVER
@@ -123,7 +124,7 @@ server_entry: SERVER
 '{' server_items '}';
 
 server_items: | server_item server_items;
-server_item: server_daemonize | server_pidfile | server_port | server_bind;
+server_item: server_daemonize | server_pidfile | server_port | server_bind | server_randoms;
 
 MySQL_items: | MySQL_item MySQL_items;
 MySQL_item: MySQL_host | MySQL_port | MySQL_username | MySQL_database | MySQL_password | MySQL_retrytimes;
@@ -246,6 +247,12 @@ server_bind: BIND '=' STR ';'
 {
 	ctx->bind = yyla.value.sval;
 	tfm::printf(" Server bind: %s\n", ctx->bind);
+};
+
+server_randoms: RANDOMS '=' STR ';'
+{
+		ctx->randoms = yyla.value.sval;
+		tfm::printf(" Randoms: %s\n", ctx->randoms);
 };
 
 /*server_readtimeout: READTIMEOUT '=' CINT ';'
