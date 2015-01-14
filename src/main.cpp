@@ -13,7 +13,7 @@
 // Our thread engine.
 #include "ThreadEngine.h"
 #include "EventDispatcher.h"
-#include "MySQL.h"
+//#include "MySQL.h"
 #include "Config.h"
 #include "Request.h"
 #include "file.h"
@@ -21,7 +21,7 @@
 std::atomic_bool quit;
 
 ThreadHandler *threads;
-MySQL *ms;
+//MySQL *ms;
 Config *c;
 EventDispatcher OnRequest;
 
@@ -48,13 +48,24 @@ void OpenListener(int sock_fd)
 		//OnRequest.CallVoidEvent("REQUEST", r, r.GetParam("SCRIPT_NAME"));
 
 		// Form the HTTP header enough, nginx will fill in the rest.
-		r.Write("Content-Type: text/html\r\n\r\n");
+		//r.Write("Content-Type: text/html\r\n\r\n");
 		
 
-		std::vector<std::string> files = DirectoryList(c->randoms);
+		std::vector<std::string> files = FileSystem::DirectoryList(c->randoms);
+		// 1 Kilobyte of space for copying.
+		uint8_t *bytes = new uint8_t[1024];
 
+		for (auto it : files)
+		{
+				if (FileSystem::IsFile(it))
+				{
+						auto file = FileSystem::OpenFile(it, FS_READ);
+						size_t len = file->Read(bytes, 1024);
+						r.WriteData(bytes, len);
+				}
+		}
 
-
+		delete[] bytes;
 
 		FCGX_Finish_r(&request);
 	}
@@ -90,8 +101,8 @@ int main(int argc, char **argv)
 	printf("Opened socket fd: %d\n", sock_fd);
 
 	// Initialize MySQL
-	MySQL m(c->hostname, c->username, c->password, c->database, c->mysqlport);
-	ms = &m;
+	//MySQL m(c->hostname, c->username, c->password, c->database, c->mysqlport);
+	//ms = &m;
 
 	for (unsigned int i = 0; i < (th.totalConcurrentThreads * 2) / 2; ++i)
 		th.AddQueue(OpenListener, sock_fd);
@@ -104,7 +115,7 @@ int main(int argc, char **argv)
 	while(!quit)
 	{
 		sleep(5);
-		ms->CheckConnection();
+		//ms->CheckConnection();
 	}
 
 	printf("Shutting down.\n");

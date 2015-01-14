@@ -105,8 +105,8 @@ class FileSystem
 {
 public:
 
-	virtual File *OpenFile(const std::string &path, fsMode_t mode);
-	virtual void CloseFile(File *f);
+	static File *OpenFile(const std::string &path, fsMode_t mode);
+	static void CloseFile(File *f);
 
 
 	// Static functions used for simple reasons
