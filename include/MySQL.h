@@ -13,10 +13,16 @@
 #include <mysql/my_global.h>
 #include <mysql/mysql.h>
 
+#if 0
 typedef struct MySQL_Result_s {
 	int fields;
 	std::map<int, MYSQL_ROW> rows;
 } MySQL_Result;
+#endif
+//                 field/col    value
+typedef std::map<std::string, std::string> MySQL_Row;
+// vector of rows
+typedef std::vector<MySQL_Row> MySQL_Result;
 
 class MySQLException : public std::exception
 {

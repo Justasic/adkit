@@ -70,13 +70,19 @@ void OpenListener(int sock_fd)
 		// Test Query
 		try {
 			MySQL_Result mr = ms->Query("SELECT * from " + ms->Escape("testtbl"));
-			for (auto it : mr.rows)
+			// Dump fields first
+			for (auto field : mr[0])
+				r.Write("%s ", field.first);
+
+			// Now dump rows.
+			for (auto it : mr)
 			{
-				for (int i = 0; i < mr.fields; ++i)
-					r.Write("%s ", it.second[i] ? it.second[i] : "(NULL)");
+				for (auto it2 : it)
+					r.Write("%s ", it2.second.empty() ? "(NULL)" : it2.second);
+
 				r.Write("<br/>");
 			}
-			printf("%lu rows with %d columns\n", mr.rows.size(), mr.fields);
+			printf("%lu rows with %lu columns\n", mr.size(), mr[0].size());
 		}
 		catch(const MySQLException &e)
 		{
